@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow'
+}
+
+dependencies {
+
+}
+
+shadowJar {
+    archiveBaseName.set('hw2_Generics')
+    archiveVersion.set('0.1')
+    archiveClassifier.set('')
+    manifest {
+        attributes 'Main-Class': 'hw2_Generics.hw2_App'
+    }
+}
+
+tasks.build.dependsOn tasks.shadowJar
