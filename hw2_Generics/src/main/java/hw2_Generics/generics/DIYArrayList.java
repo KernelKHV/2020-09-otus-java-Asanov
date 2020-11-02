@@ -5,17 +5,17 @@ import java.util.*;
 public class DIYArrayList<E> implements List<E> {
 
     private Object[] resData;
-    private int default_capaсity=10;
+    private static final int DEFAULT_CAPACITY = 10;
     private int size;
 
-    public DIYArrayList(){
-        this.resData = new Object[default_capaсity];
+    public DIYArrayList() {
+        resData = new Object[DEFAULT_CAPACITY];
     }
 
-    private boolean setArrayListSize(int size){
-        if (size>default_capaсity){
-            int new_capaсity = size + (default_capaсity*3)/3;
-            this.resData = new Object[new_capaсity];
+    private boolean setArrayListSize(int minSize) {
+        if (minSize > DEFAULT_CAPACITY) {
+            int newCapacity = minSize + (DEFAULT_CAPACITY * 3) / 2 + 1;
+            this.resData = new Object[newCapacity];
             return true;
         }
         return false;
@@ -28,12 +28,12 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -42,21 +42,26 @@ public class DIYArrayList<E> implements List<E> {
     }
 
     private class DIYIterator implements Iterator<E> {
-        private int index=0;
+        private int index = 0;
 
-        public boolean hasNext(){
-            return index<size;
+        public boolean hasNext() {
+            return index != size;
         }
+
         @SuppressWarnings("unchecked")
-        public E next(){
-            return (E)DIYArrayList.this.resData[index++];
+        public E next() {
+            if (index >= size)
+                throw new NoSuchElementException();
+            if (index >= resData.length)
+                throw new ConcurrentModificationException();
+            return (E) DIYArrayList.this.resData[index++];
         }
     }
 
     @Override
     public Object[] toArray() {
         Object[] res = new Object[size];
-        System.arraycopy(this.resData, 0, res , 0, size);
+        System.arraycopy(this.resData, 0, res, 0, size);
         return res;
     }
 
@@ -68,10 +73,11 @@ public class DIYArrayList<E> implements List<E> {
     @Override
     public boolean add(E e) {
         Object[] a = this.resData;
-        if(setArrayListSize(size+1)==true)
-            System.arraycopy(a,0, this.resData, 0, size);
-        this.resData[size] = e;
-        size++;
+        if (setArrayListSize(size + 1)) {
+            System.arraycopy(a, 0, this.resData, 0, size);
+        }
+        this.resData[this.size] = e;
+        this.size++;
         return true;
     }
 
@@ -87,25 +93,28 @@ public class DIYArrayList<E> implements List<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        Object[] a = c.toArray();
-        int initLenght = a.length;
-        this.setArrayListSize(initLenght);
-        System.arraycopy(a,0, resData,0, initLenght);
-        size = initLenght;
-        return true;
+        /*Object[] a = c.toArray();
+        int initLen = a.length;
+        this.setArrayListSize(initLen + c.size());
+        System.arraycopy(a, 0, resData, 0, initLen);
+        System.arraycopy(c.toArray(), 0, resData, initLen, c.size());
+        size = initLen + c.size();
+        return true;*/
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean addAll(int index, Collection<? extends E> c) {
-        Object[] a = c.toArray();
+       /* Object[] a = c.toArray();
         int initLenght = a.length;
         this.setArrayListSize(initLenght);
         int mov = initLenght - index;
         if (mov > 0)
-            System.arraycopy(resData, index, resData,index+initLenght, mov);
-        System.arraycopy(a,0, resData,index, initLenght);
+            System.arraycopy(resData, index, resData, index + initLenght, mov);
+        System.arraycopy(a, 0, resData, index, initLenght);
         size = initLenght;
-        return true;
+        return true;*/
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -135,12 +144,12 @@ public class DIYArrayList<E> implements List<E> {
     public E set(int index, E element) {
         Objects.checkIndex(index, size);
         this.resData[index] = element;
-        return (E)this.resData;
+        return (E) this.resData;
     }
 
     @Override
     public void add(int index, E element) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -164,7 +173,7 @@ public class DIYArrayList<E> implements List<E> {
     }
 
     private String outOfBoundsMsg(int index) {
-        return "Index: "+index+", Size: "+size;
+        return "Index: " + index + ", Size: " + size;
     }
 
     @Override
@@ -179,6 +188,7 @@ public class DIYArrayList<E> implements List<E> {
 
     private class DIYListItr implements ListIterator<E> {
         private int index = 0;
+
         public boolean hasPrevious() {
             return index != 0;
         }
@@ -193,20 +203,20 @@ public class DIYArrayList<E> implements List<E> {
 
         @Override
         public boolean hasNext() {
-            return index<size;
+            return index < size;
         }
 
         @SuppressWarnings("unchecked")
         @Override
         public E next() {
-            rangeCheckForAdd(index+1);
+            rangeCheckForAdd(index + 1);
             return (E) resData[index++];
         }
 
         @SuppressWarnings("unchecked")
         @Override
         public E previous() {
-            rangeCheckForAdd(index-1);
+            rangeCheckForAdd(index - 1);
             return (E) resData[index--];
         }
 
@@ -218,7 +228,14 @@ public class DIYArrayList<E> implements List<E> {
 
         @Override
         public void set(E e) {
-            resData[index-1]=e;
+            if (index == 0)
+                throw new IllegalStateException();
+            try {
+                resData[index - 1] = e;
+            } catch (IndexOutOfBoundsException ex) {
+                throw new ConcurrentModificationException();
+            }
+
         }
 
         @Override

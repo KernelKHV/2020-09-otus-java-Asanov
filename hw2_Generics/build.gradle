@@ -12,7 +12,7 @@ shadowJar {
     archiveVersion.set('0.1')
     archiveClassifier.set('')
     manifest {
-        attributes 'Main-Class': 'hw2_Generics.hw2_App'
+        attributes 'Main-Class': 'hw2_Generics.Hw2App'
     }
 }
 
