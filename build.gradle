@@ -27,7 +27,7 @@ idea {
 }
 
 allprojects {
-    group "hw1_Gradle"
+    group "hw_otus"
 
     repositories {
         mavenCentral()
