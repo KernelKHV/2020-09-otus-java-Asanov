@@ -13,7 +13,7 @@ public class DIYArrayList<E> implements List<E> {
     }
 
     private boolean setArrayListSize(int minSize) {
-        if (minSize > DEFAULT_CAPACITY) {
+        if (minSize > resData.length) {
             int newCapacity = minSize + (DEFAULT_CAPACITY * 3) / 2 + 1;
             this.resData = new Object[newCapacity];
             return true;
