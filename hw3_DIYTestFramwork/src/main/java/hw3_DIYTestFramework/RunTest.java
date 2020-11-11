@@ -5,6 +5,7 @@ import hw3_DIYTestFramework.annotations.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -50,16 +51,21 @@ public class RunTest {
     private void invokeTest(Method method) {
         try {
             Object constr = this.constructor.newInstance();
-            for (Method befMethod : this.beforeMethod) {
-                befMethod.invoke(constr);
+            try {
+                for (Method befMethod : this.beforeMethod) {
+                    befMethod.invoke(constr);
+                }
+                method.invoke(constr);
+                this.testPassed++;
+            } catch (Exception ex) {
+                this.testFail++;
+            } finally {
+                for (Method aftMethod : this.afterMethod) {
+                    aftMethod.invoke(constr);
+                }
             }
-            method.invoke(constr);
-            for (Method aftMethod : this.afterMethod) {
-                aftMethod.invoke(constr);
-            }
-            this.testPassed++;
-        } catch (Exception ex) {
-            this.testFail++;
+        }catch (IllegalAccessException | InstantiationException | InvocationTargetException ex){
+
         }
     }
 
