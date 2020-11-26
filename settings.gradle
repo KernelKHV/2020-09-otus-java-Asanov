@@ -11,4 +11,5 @@ rootProject.name = 'homework'
 include 'hw1_Gradle'
 include 'hw2_Generics'
 include 'hw3_DIYTestFramwork'
+include 'hw4_GC'
 
