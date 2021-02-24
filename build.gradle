@@ -32,18 +32,19 @@ allprojects {
     repositories {
         mavenCentral()
     }
-}
-
-dependencies {
-    // Use JUnit Jupiter API for testing.
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-
-    // Use JUnit Jupiter Engine for testing.
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
-}
 
 
-test {
-    // Use junit platform for unit tests
-    useJUnitPlatform()
+    apply plugin: "io.spring.dependency-management"
+    dependencyManagement {
+        dependencies {
+            imports {
+                mavenBom("org.springframework.boot:spring-boot-dependencies:2.4.1")
+            }
+            // Use JUnit Jupiter API for testing.
+            dependency('org.junit.jupiter:junit-jupiter-api:5.6.2')
+            // Use JUnit Jupiter Engine for testing.
+            dependency('org.junit.jupiter:junit-jupiter-engine:5.6.2')
+            dependency("org.ow2.asm:asm-commons:8.0")
+        }
+    }
 }
