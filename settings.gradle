@@ -13,4 +13,5 @@ include 'hw2_Generics'
 include 'hw3_DIYTestFramwork'
 include 'hw4_GC'
 include 'hw5_AOP'
+include 'hw6_ATM'
 
